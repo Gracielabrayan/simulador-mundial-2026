@@ -340,7 +340,7 @@ export default function SimuladorUltraPro() {
                         </div>
                       </Flex>
                       <div className="h-[400px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <ResponsiveContainer width="100%" height={400}>
                           <RechartBarChart data={chartData} margin={{ top: 20, right: 30, left: -20, bottom: 20 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                             <XAxis dataKey="Paquetes" stroke="#64748b" tick={{fill: '#94a3b8', fontSize: 13, fontWeight: 600}} tickMargin={15} />
