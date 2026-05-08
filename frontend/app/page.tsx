@@ -6,13 +6,21 @@ import { Package, Calculator, Zap, Users, Target, Activity, Sparkles, Database, 
 import dynamic from 'next/dynamic';
 
 // --- SOLUCIÓN PARA VERCEL: CARGA DINÁMICA DE GRÁFICOS ---
+// @ts-ignore
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
+// @ts-ignore
 const RechartBarChart = dynamic(() => import('recharts').then(mod => mod.BarChart), { ssr: false });
+// @ts-ignore
 const Bar = dynamic(() => import('recharts').then(mod => mod.Bar), { ssr: false });
+// @ts-ignore
 const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false });
+// @ts-ignore
 const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false });
+// @ts-ignore
 const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false });
+// @ts-ignore
 const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
+// @ts-ignore
 const ReferenceLine = dynamic(() => import('recharts').then(mod => mod.ReferenceLine), { ssr: false });
 
 interface SimResults {
