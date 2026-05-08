@@ -86,7 +86,7 @@ export default function SimuladorUltraPro() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/simulate', {
+      const response = await fetch('https://simulador-mundial-2026.onrender.com/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
