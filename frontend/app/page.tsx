@@ -62,11 +62,16 @@ const Frac = ({ top, bot }: { top: string, bot: string }) => (
 export default function SimuladorUltraPro() {
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
-  // TIPADO AGREGADO ACÁ
   const [results, setResults] = useState<SimResults | null>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [hasSimulated, setHasSimulated] = useState(false);
   
+  // PARCHE DE HIDRATACIÓN PARA EL GRÁFICO
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const [figusTotal, setFigusTotal] = useState(980);
   const [figusPaquete, setFigusPaquete] = useState(7);
   const [amigos, setAmigos] = useState(0);
@@ -92,7 +97,6 @@ export default function SimuladorUltraPro() {
     }
 
     try {
-      // CAMBIÁ ESTA URL POR LA TUYA DE RENDER ANTES DE SUBIR
       const response = await fetch('https://simulador-mundial-2026.onrender.com/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -125,7 +129,6 @@ export default function SimuladorUltraPro() {
     document.body.removeChild(link);
   };
 
-  // CHECK DE SEGURIDAD PARA TS
   const ahorro = (results?.promedio_teorico && results.promedio_teorico > 0) 
     ? Math.round(((results.promedio_teorico - results.promedio_simulado) / results.promedio_teorico) * 100) : 0;
 
@@ -172,7 +175,6 @@ export default function SimuladorUltraPro() {
   return (
     <div className="dark min-h-screen bg-[#030712] text-slate-200 font-sans selection:bg-blue-500/30 relative overflow-x-hidden">
       
-      {/* EFECTO DE FONDO WOW */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_100%)]"></div>
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-900/20 blur-[120px] rounded-full mix-blend-screen animate-pulse"></div>
@@ -196,11 +198,9 @@ export default function SimuladorUltraPro() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
-          {/* SIDEBAR DE CONTROL */}
           <aside className="lg:col-span-3 space-y-6">
             <div className="bg-[#0f172a]/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-7 shadow-[0_0_40px_rgba(0,0,0,0.5)] relative overflow-hidden sticky top-8 group">
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-1000"></div>
-              
               <Title className="text-white mb-8 font-bold flex items-center gap-3 text-lg tracking-wide">
                 <Target size={20} className="text-blue-400"/> SET DE PARÁMETROS
               </Title>
@@ -244,9 +244,7 @@ export default function SimuladorUltraPro() {
             </div>
           </aside>
 
-          {/* ÁREA PRINCIPAL */}
           <main className="lg:col-span-9">
-            
             <div className="mb-8 p-2 bg-[#0f172a]/60 backdrop-blur-xl rounded-2xl border border-white/10 inline-flex flex-wrap gap-2 shadow-2xl relative z-20">
               {[
                 { id: 0, icon: BarChart3, label: "Dashboard Interactivo", color: "blue" },
@@ -268,7 +266,6 @@ export default function SimuladorUltraPro() {
             </div>
 
             <div className="relative min-h-[600px]">
-              
               {loading && (
                 <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#030712]/80 backdrop-blur-md rounded-3xl border border-blue-500/30 animate-in zoom-in-95 duration-300 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
                   <TerminalSquare size={64} className="text-blue-500 mb-6 animate-pulse" />
@@ -285,13 +282,11 @@ export default function SimuladorUltraPro() {
                 </div>
               )}
 
-              {/* PESTAÑA 0: DASHBOARD */}
               {!loading && activeTab === 0 && (
                 !hasSimulated ? (
                   <EstadoVacio mensaje="Configure los parámetros a la izquierda e inicie la secuencia." />
                 ) : (
                   <div className="animate-in slide-in-from-bottom-8 fade-in duration-1000 space-y-8">
-                    
                     <Grid numItemsMd={3} className="gap-6">
                       {[
                         { title: "Promedio Simulado", value: countSimulado, raw: results?.promedio_simulado || 0, icon: Package, color: "blue", sub: `Con ${amigos} amigos` },
@@ -334,23 +329,21 @@ export default function SimuladorUltraPro() {
                           <Title className="text-white text-2xl font-black tracking-tight">Distribución de Frecuencias</Title>
                           <Text className="text-slate-400 font-medium mt-1">Histograma de Paquetes Necesarios para llenar el álbum.</Text>
                         </div>
-                        <div className="hidden md:flex gap-4 bg-slate-900/50 p-3 rounded-xl border border-white/5">
-                          <Flex className="gap-2 w-auto"><div className="w-4 h-1 bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.8)]"></div><span className="text-slate-300 font-mono text-sm font-bold">Teórico</span></Flex>
-                          <Flex className="gap-2 w-auto"><div className="w-4 h-1 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div><span className="text-slate-300 font-mono text-sm font-bold">Simulado</span></Flex>
-                        </div>
                       </Flex>
                       <div className="h-[400px] w-full">
-                        <ResponsiveContainer width="100%" height={400}>
-                          <RechartBarChart data={chartData} margin={{ top: 20, right: 30, left: -20, bottom: 20 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                            <XAxis dataKey="Paquetes" stroke="#64748b" tick={{fill: '#94a3b8', fontSize: 13, fontWeight: 600}} tickMargin={15} />
-                            <YAxis stroke="#64748b" tick={{fill: '#94a3b8', fontSize: 13, fontWeight: 600}} allowDecimals={false} />
-                            <Tooltip cursor={{fill: '#1e293b', opacity: 0.6}} contentStyle={{ backgroundColor: '#020617', border: '1px solid #334155', color: '#f8fafc', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.8)', padding: '12px 20px' }} />
-                            <Bar dataKey="Frecuencia" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={45} className="drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                            <ReferenceLine x={closestTeorico} stroke="#eab308" strokeWidth={3} strokeDasharray="6 6" />
-                            <ReferenceLine x={closestSimulado} stroke="#ef4444" strokeWidth={3} />
-                          </RechartBarChart>
-                        </ResponsiveContainer>
+                        {isClient && (
+                          <ResponsiveContainer width="100%" height={400}>
+                            <RechartBarChart data={chartData} margin={{ top: 20, right: 30, left: -20, bottom: 20 }}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                              <XAxis dataKey="Paquetes" stroke="#64748b" tick={{fill: '#94a3b8', fontSize: 13, fontWeight: 600}} tickMargin={15} />
+                              <YAxis stroke="#64748b" tick={{fill: '#94a3b8', fontSize: 13, fontWeight: 600}} allowDecimals={false} />
+                              <Tooltip cursor={{fill: '#1e293b', opacity: 0.6}} contentStyle={{ backgroundColor: '#020617', border: '1px solid #334155', color: '#f8fafc', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.8)', padding: '12px 20px' }} />
+                              <Bar dataKey="Frecuencia" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={45} className="drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                              <ReferenceLine x={closestTeorico} stroke="#eab308" strokeWidth={3} strokeDasharray="6 6" />
+                              <ReferenceLine x={closestSimulado} stroke="#ef4444" strokeWidth={3} />
+                            </RechartBarChart>
+                          </ResponsiveContainer>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -372,7 +365,6 @@ export default function SimuladorUltraPro() {
                     <p className="text-slate-300 text-xl leading-relaxed relative z-10">
                       La <strong>Esperanza Matemática</strong> (promedio de intentos) para llenar el álbum de <em className="text-purple-400 font-serif not-italic font-bold">n</em> figuritas individuales es la suma de las inversas de esas probabilidades:
                     </p>
-                    
                     <div className="bg-[#030712]/80 p-8 rounded-3xl font-serif text-center text-3xl md:text-4xl text-purple-400 shadow-[inset_0_0_30px_rgba(0,0,0,0.8)] border border-purple-500/20 my-10 overflow-x-auto relative z-10 hover:border-purple-500/50 transition-colors flex items-center justify-center">
                       <span className="whitespace-nowrap font-bold drop-shadow-[0_0_15px_rgba(168,85,247,0.4)] flex items-center justify-center gap-3">
                         <span>E = <em className="not-italic">n</em> × (</span>
@@ -380,7 +372,6 @@ export default function SimuladorUltraPro() {
                         <span>)</span>
                       </span>
                     </div>
-
                     <p className="text-slate-300 text-xl leading-relaxed relative z-10">
                       Como en la realidad los paquetes traen figuritas juntas (y asumiendo simplificadamente que no vienen repetidas en el mismo paquete), dividimos el resultado final por la cantidad de figuritas por paquete.
                     </p>
@@ -394,16 +385,9 @@ export default function SimuladorUltraPro() {
                     <p className="text-slate-300 text-xl leading-relaxed relative z-10 mb-6">
                       Mientras que el Valor Teórico calcula el esfuerzo de una persona sola, la simulación de <strong>Montecarlo</strong> nos permite introducir variables sociales.
                     </p>
-                    <p className="text-slate-300 text-xl leading-relaxed relative z-10 mb-6">
-                      En este modelo, el "Intercambio" se simplifica bajo la siguiente lógica:
-                    </p>
-                    <ul className="list-disc list-inside text-slate-300 text-xl space-y-4 ml-4 md:ml-8 marker:text-emerald-500 relative z-10 mb-8 font-medium">
-                      <li><strong>Simultaneidad:</strong> Tus amigos compran paquetes al mismo tiempo que tú.</li>
-                      <li><strong>Cero desperdicio:</strong> Si un amigo saca una figurita que tú no tienes, te la entrega inmediatamente.</li>
-                    </ul>
                     <div className="bg-emerald-900/20 p-8 rounded-3xl border border-emerald-500/30 relative z-10">
                       <p className="text-emerald-100 text-xl leading-relaxed">
-                        <strong className="text-emerald-400 font-black">¿Por qué baja tanto el promedio?</strong> Matemáticamente, estamos aumentando la cantidad de "intentos" por unidad de tiempo sin aumentar tu costo personal. Si tienes {amigos > 0 ? amigos : 5} amigos, en cada ronda de compra se abren {amigos > 0 ? amigos + 1 : 6} paquetes buscando las figuritas que te faltan a ti. Esto reduce drásticamente la "cola" de la distribución, evitando que te quedes estancado buscando las últimas 10 figuritas difíciles durante semanas.
+                        <strong className="text-emerald-400 font-black">¿Por qué baja tanto el promedio?</strong> Matemáticamente, estamos aumentando la cantidad de "intentos" por unidad de tiempo sin aumentar tu costo personal. Esto reduce drásticamente la "cola" de la distribución, evitando que te quedes estancado buscando las últimas 10 figuritas difíciles durante semanas.
                       </p>
                     </div>
                   </div>
@@ -418,14 +402,14 @@ export default function SimuladorUltraPro() {
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 animate-in slide-in-from-right-8 fade-in duration-700">
                     <div className="lg:col-span-2 bg-[#0f172a]/80 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
                       <div className="bg-slate-900/80 p-6 border-b border-white/10">
-                        <Title className="text-white font-bold flex items-center gap-2"><Database size={20} className="text-rose-400" /> Datos crudos de la simulación</Title>
+                        <Title className="text-white font-bold flex items-center gap-2"><Database size={20} className="text-rose-400" /> Datos crudos</Title>
                       </div>
                       <div className="max-h-[500px] overflow-y-auto custom-scrollbar bg-[#030712]/50">
                         <table className="w-full text-left border-collapse">
                           <thead className="bg-[#0f172a] sticky top-0 z-10 border-b border-white/10 shadow-md">
                             <tr>
                               <th className="py-5 px-8 text-slate-400 font-bold text-sm tracking-wider uppercase">Iteración</th>
-                              <th className="py-5 px-8 text-slate-400 font-bold text-sm text-right tracking-wider uppercase">Paquetes Comprados</th>
+                              <th className="py-5 px-8 text-slate-400 font-bold text-sm text-right tracking-wider uppercase">Paquetes</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-white/5">
@@ -439,22 +423,14 @@ export default function SimuladorUltraPro() {
                         </table>
                       </div>
                     </div>
-
                     <div className="lg:col-span-3 flex flex-col justify-center bg-gradient-to-br from-[#0f172a]/80 to-rose-950/20 backdrop-blur-xl border border-white/10 rounded-3xl p-12 shadow-2xl relative overflow-hidden group">
                       <div className="absolute -bottom-20 -right-20 text-rose-500/10 group-hover:scale-125 group-hover:rotate-12 transition-transform duration-1000"><Download size={400} /></div>
                       <div className="absolute top-0 left-0 w-2 h-full bg-rose-500 shadow-[0_0_30px_rgba(244,63,94,1)]"></div>
                       <h3 className="text-4xl font-black text-white mb-6 relative z-10 tracking-tight">📥 Exportar Resultados</h3>
-                      <p className="text-slate-300 text-xl mb-12 leading-relaxed relative z-10 max-w-lg">
-                        Descargá la tabla completa de la simulación en formato CSV para documentar tu investigación o abrirla en Excel.
-                      </p>
-                      <button
-                        onClick={descargarCSV}
-                        className="w-fit relative group/export overflow-hidden rounded-2xl z-10 hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_rgba(244,63,94,0.3)]"
-                      >
+                      <button onClick={descargarCSV} className="w-fit relative group/export overflow-hidden rounded-2xl z-10 hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_rgba(244,63,94,0.3)]">
                         <div className="absolute inset-0 bg-gradient-to-r from-rose-500 to-pink-600 opacity-90 group-hover/export:opacity-100 transition-opacity"></div>
                         <div className="relative px-10 py-5 flex items-center justify-center gap-4 text-white font-black tracking-widest text-lg">
-                          <Download size={24} />
-                          Descargar datos en CSV
+                          <Download size={24} /> Descargar CSV
                         </div>
                       </button>
                     </div>
@@ -465,27 +441,13 @@ export default function SimuladorUltraPro() {
           </main>
         </div>
       </div>
-
-      {/* ESTILOS GLOBALES */}
       <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar { width: 10px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; border: 2px solid rgba(0,0,0,0.2); }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-        
-        @keyframes scan {
-          0% { top: 0%; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
+        @keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
         .animate-scan { animation: scan 2s linear infinite; }
-        
-        @keyframes gradient {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .animate-gradient { animation: gradient 3s ease infinite; }
       `}} />
     </div>
