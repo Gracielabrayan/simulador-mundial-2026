@@ -50,3 +50,20 @@ def simulate(req: SimulacionRequest):
         "promedio_teorico": round(float(prom_teorico), 1),
         "data": muestras
     }
+
+# RUTA PARA EL CRON-JOB (Keep Alive)
+@app.get("/health")
+def health():
+    return {"status": "Estadio encendido y listo para el Kick Off"}
+
+@app.post("/simulate")
+def simulate(req: SimulacionRequest):
+    rd.seed(req.semilla)
+    prom_teorico = esperanza_teorica(req.figus_total, req.figus_paquete)
+    muestras = [simular_album(req.figus_total, req.figus_paquete, req.amigos) for _ in range(req.n_simulaciones)]
+
+    return {
+        "promedio_simulado": round(float(np.mean(muestras)), 1),
+        "promedio_teorico": round(float(prom_teorico), 1),
+        "data": muestras
+    }
