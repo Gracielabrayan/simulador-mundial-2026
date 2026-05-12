@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
+# Configuración de CORS para que tu HTML pueda hablar con Render
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -28,33 +29,19 @@ def esperanza_teorica(figus_total, figus_paquete):
 def simular_album(figus_total, figus_paquete, amigos=0):
     album = set()
     paquetes = 0
+    intentos_por_ronda = 1 + amigos 
     while len(album) < figus_total:
-        paquete = rd.sample(range(1, figus_total + 1), min(figus_paquete, figus_total))
-        album.update(paquete)
+        for _ in range(intentos_por_ronda):
+            paquete = rd.sample(range(1, figus_total + 1), min(figus_paquete, figus_total))
+            album.update(paquete)
+            if len(album) >= figus_total: break
         paquetes += 1
-        for _ in range(amigos):
-            paquete_amigo = rd.sample(range(1, figus_total + 1), min(figus_paquete, figus_total))
-            album.update(paquete_amigo)
     return paquetes
 
-@app.post("/simulate")
-def simulate(req: SimulacionRequest):
-    # Fija la semilla para reproducibilidad exacta
-    rd.seed(req.semilla)
-
-    prom_teorico = esperanza_teorica(req.figus_total, req.figus_paquete)
-    muestras = [simular_album(req.figus_total, req.figus_paquete, req.amigos) for _ in range(req.n_simulaciones)]
-
-    return {
-        "promedio_simulado": round(float(np.mean(muestras)), 1),
-        "promedio_teorico": round(float(prom_teorico), 1),
-        "data": muestras
-    }
-
-# RUTA PARA EL CRON-JOB (Keep Alive)
-@app.get("/health")
-def health():
-    return {"status": "Estadio encendido y listo para el Kick Off"}
+# NUEVO: Ruta para que el Cron-job mantenga el estadio encendido
+@app.get("/")
+def home():
+    return {"status": "Estadio encendido", "mensaje": "Listo para el Kick Off"}
 
 @app.post("/simulate")
 def simulate(req: SimulacionRequest):
