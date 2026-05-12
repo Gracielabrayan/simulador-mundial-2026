@@ -156,7 +156,7 @@ export default function SimuladorUltraPro() {
     });
     chartData = Object.keys(bins).map(key => ({
       Paquetes: Number(key), Frecuencia: bins[Number(key)]
-    }));
+    })).sort((a, b) => a.Paquetes - b.Paquetes); // Ordenar para evitar saltos en el gráfico
     closestTeorico = Math.round(results.promedio_teorico / binSize) * binSize;
     closestSimulado = Math.round(results.promedio_simulado / binSize) * binSize;
   }
@@ -344,9 +344,14 @@ export default function SimuladorUltraPro() {
                         </div>
                       </Flex>
                       {isMounted && (
-                        <div className="h-[400px] w-full">
-                          <ResponsiveContainer width="100%" height={400}>
-                            <RechartBarChart data={chartData} margin={{ top: 20, right: 30, left: -20, bottom: 20 }}>
+                        /* FIX: Contenedor con altura mínima forzada para Vercel */
+                        <div className="w-full" style={{ height: '400px', minHeight: '400px' }}>
+                          <ResponsiveContainer width="99%" height="100%" id="chart-container">
+                            <RechartBarChart 
+                              data={chartData} 
+                              margin={{ top: 20, right: 30, left: -20, bottom: 20 }}
+                              key={`chart-${results.data.length}`} /* FIX: Trigger de re-render al recibir datos */
+                            >
                               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                               <XAxis dataKey="Paquetes" stroke="#64748b" tick={{fill: '#94a3b8', fontSize: 13, fontWeight: 600}} tickMargin={15} />
                               <YAxis stroke="#64748b" tick={{fill: '#94a3b8', fontSize: 13, fontWeight: 600}} allowDecimals={false} />
