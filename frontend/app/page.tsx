@@ -343,8 +343,7 @@ export default function SimuladorUltraPro() {
                           <Flex className="gap-2 w-auto"><div className="w-4 h-1 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div><span className="text-slate-300 font-mono text-sm font-bold">Simulado</span></Flex>
                         </div>
                       </Flex>
-                      {isMounted && (
-                        /* FIX: Contenedor con altura mínima forzada para Vercel */
+                      {isMounted && results && (
                         <div className="w-full" style={{ height: '400px', minHeight: '400px' }}>
                           <ResponsiveContainer width="99%" height="100%" id="chart-container">
                             <RechartBarChart 
