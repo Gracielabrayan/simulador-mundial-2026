@@ -350,7 +350,7 @@ export default function SimuladorUltraPro() {
                             <RechartBarChart 
                               data={chartData} 
                               margin={{ top: 20, right: 30, left: -20, bottom: 20 }}
-                              key={`chart-${results.data.length}`} /* FIX: Trigger de re-render al recibir datos */
+                              key={`chart-${results?.data?.length || 0}`}
                             >
                               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                               <XAxis dataKey="Paquetes" stroke="#64748b" tick={{fill: '#94a3b8', fontSize: 13, fontWeight: 600}} tickMargin={15} />
